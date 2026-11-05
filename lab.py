@@ -1,10 +1,20 @@
 import random
 import tkinter as tk
 from PIL import Image, ImageTk
+import threading
+import pygame
 
 SIZE_X = 1300
 SIZE_Y = 740
 BORDER = 4
+
+
+def play_music():
+    pygame.mixer.init()
+    pygame.mixer.music.load('music.mp3')
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(loops=-1)
+
 
 def gen_key():
     alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
@@ -61,7 +71,7 @@ def render_body(parent):
                         highlightthickness=0)
     
     key_field.pack(side=tk.TOP, pady=20, padx=20)
-    key_field.insert("1.0", "Нажмите кнопку\nдля генерации")
+    key_field.insert("1.0", "Нажмите кнопку\nдля генерации\nключа для игры")
     key_field.config(state="disabled")
 
 
@@ -69,7 +79,6 @@ def render_body(parent):
                         command=lambda: render_key(key_field, gen_key()),
                         bg="#12132e",
                         bd=0,
-                        highlightthickness=0,
                         activeforeground="white")
     btn_gen.pack(side=tk.TOP)
 
@@ -88,9 +97,9 @@ if __name__ == "__main__":
     
     canvas = tk.Canvas(root, width=SIZE_X, height=SIZE_Y,
                         highlightthickness=0, bd=0)
-    canvas.pack(fill="both", expand=True)
+    canvas.pack(fill=tk.BOTH, expand=True)
 
-    img = Image.open("bg_pic.jpg").resize((SIZE_X, SIZE_Y), Image.LANCZOS)
+    img = Image.open("bg_pic.jpg")
     bg = ImageTk.PhotoImage(img)
     canvas.create_image(0, 0, image=bg, anchor="nw")
     canvas.image = bg
@@ -98,11 +107,10 @@ if __name__ == "__main__":
 
     ui = tk.Frame(canvas, bg="#12132e")
     canvas.create_window(
-        SIZE_X // 2, SIZE_Y // 2 + 40,
-        window=ui, anchor="center",
-        width=300, height=200
-    )
+        SIZE_X - 200, SIZE_Y // 2 + 40,
+        window=ui, width=300, height=200)
 
     render_frames(ui)
-
+    pygame.mixer.init()
+    threading.Thread(target=play_music, daemon=True).start()
     root.mainloop()
