@@ -65,6 +65,12 @@ def render_header(parent):
     lbl.pack(side=tk.TOP)
 
 
+def blink(widget, colors=("#1D506D", "#3A8FC4", "#9216A8"), delay=600, i=0):
+    widget.config(bg=colors[i % 3])
+    widget.after(delay, blink, widget, colors, delay, i+1)
+
+
+
 def render_body(parent):
     key_field = tk.Text(parent, width=20, height=3,
                         bg="#29222c", fg="white", bd=0,
@@ -81,6 +87,7 @@ def render_body(parent):
     btn_gen.pack(side=tk.TOP)
     btn_gen.bind("<Button-1>", lambda event: render_key(key_field, gen_key()))
 
+    blink(btn_gen)
 
     music_vol = tk.Label(parent, bg="#1D266D", fg="white",
                         bd=0, width=15, height=2,
