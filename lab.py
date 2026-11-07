@@ -7,10 +7,10 @@ import pygame
 SIZE_X = 1300
 SIZE_Y = 740
 BORDER = 4
+MUSIC_STATUS = True
 
 
 def play_music():
-    pygame.mixer.init()
     pygame.mixer.music.load('music.mp3')
     pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(loops=-1)
@@ -75,12 +75,29 @@ def render_body(parent):
     key_field.config(state="disabled")
 
 
-    btn_gen = tk.Button(parent, text="gen",
-                        command=lambda: render_key(key_field, gen_key()),
-                        bg="#12132e",
-                        bd=0,
-                        activeforeground="white")
+    btn_gen = tk.Label(parent, text="gen",
+                        bg="#1D506D", fg="white",
+                        bd=0, width=7, height=2)
     btn_gen.pack(side=tk.TOP)
+    btn_gen.bind("<Button-1>", lambda event: render_key(key_field, gen_key()))
+
+
+    music_vol = tk.Label(parent, bg="#1D266D", fg="white",
+                        bd=0, width=15, height=2,
+                        text="turn music on/off")
+    music_vol.pack(side=tk.TOP, pady=8)
+    music_vol.bind("<Button-1>", lambda event: music_control(music_vol))
+
+
+def music_control(parent):
+    global MUSIC_STATUS
+
+    if MUSIC_STATUS:
+        pygame.mixer.music.pause()
+        MUSIC_STATUS = False
+    else:
+        pygame.mixer.music.unpause()
+        MUSIC_STATUS = True
 
 
 def render_key(parent, key):
@@ -108,7 +125,7 @@ if __name__ == "__main__":
     ui = tk.Frame(canvas, bg="#12132e")
     canvas.create_window(
         SIZE_X - 200, SIZE_Y // 2 + 40,
-        window=ui, width=300, height=200)
+        window=ui, width=300, height=220)
 
     render_frames(ui)
     pygame.mixer.init()
